@@ -1,0 +1,26 @@
+{
+  "name": "lobsters-info",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "start": "./node_modules/.bin/ts-node ./index.ts",
+    "upgrade": "git pull && yarn && pm2 restart \"lobsters-bot\""
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "lobster-dao/lobster-nft-contracts": "git+ssh://git@github.com/lobster-dao/lobster-nft-contracts#274e59d",
+    "@types/es6-promise": "^3.3.0",
+    "axios": "^0.19.2",
+    "ethers": "^4.0.25",
+    "fs": "0.0.1-security",
+    "lodash": "^4.17.11",
+    "node-telegram-bot-api": "^0.30.0",
+    "p-iteration": "^1.1.7",
+    "sequelize": "^6.3.5",
+    "sqlite3": "^5.0.0",
+    "ts-node": "^7.0.1",
+    "typings": "^2.1.1",
+    "web3-utils": "^1.5.2"
+  }
+}

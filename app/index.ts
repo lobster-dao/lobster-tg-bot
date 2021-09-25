@@ -65,7 +65,7 @@ class LobstersApp implements ILobstersApp {
         console.log('usersCount', await this.storage.usersCount(), 'usersCountWithAddress', await this.storage.usersCountWithAddress());
 
         this.tgBot.onMessage(async (messageType: any, telegramUserId: any, telegramChatId: any, messageText: any) => {
-            if (telegramUserId !== telegramChatId) {
+            if (telegramUserId !== telegramChatId || !telegramUserId) {
                 return;
             }
             if (_.includes(config.admins, parseInt(telegramUserId))) {
@@ -80,16 +80,24 @@ class LobstersApp implements ILobstersApp {
                         usersCount
                     }));
 
-                    const users: any = _.shuffle(await this.storage.usersList());
+                    const users: any = _.shuffle(await this.storage.usersListWithAddress());
                     const addressToLeafDict = {} as any;
                     try {
-                        const leaves = treeHelper.getLeaves(users.filter((u: any) => u.address), addressToLeafDict);
+                        let restCount = config.totalTokensCount;
+                        users.forEach((u: any) => {
+                            restCount -= u.count;
+                        });
+
+                        users.push({ address: config.remainedMultisig, count: restCount });
+
+                        const leaves = treeHelper.getLeaves(users, addressToLeafDict);
                         const tree = treeHelper.makeTree(leaves);
 
                         const jsonContent = {
                             treeRoot: tree.getHexRoot(),
                             treeLeaves: [],
                         } as any;
+
 
                         users.forEach((u: any) => {
                             const leaf = addressToLeafDict[u.address];

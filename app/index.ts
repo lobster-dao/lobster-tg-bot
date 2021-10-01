@@ -13,7 +13,7 @@ const treeHelper = require('lobster-dao/lobster-nft-contracts/helpers/tree');
 function locale(name: string, options: any = {}) {
     return {
         'unknown_command': `Unknown command`,
-        'export': `${options.usersCountWithAddress}/${options.usersCount} users sent their addresses.\\n\\nGenerating Merkle Tree...`,
+        'export': `${options.usersCountWithAddress}/${options.usersCount} users sent their addresses. Rest tokens count: ${options.restCount}.\\n\\nGenerating Merkle Tree...`,
         'welcome': `🦞 Welcome to the Lobsters bot! Please, send your Ethereum address for NFT drop. If you’re on the list I will add it to Merkle Tree. Do not use exchange address!`,
         'welcome_not_in_list': `🦞 Welcome to the Lobsters bot! You are not on the List. Sorry!`,
         'didnt_start': `Sorry, we don’t collect addresses for the drop yet. Please come back on the <code>` + utils.timestampToDateString(config.startTimestamp) + ' UTC</code>',
@@ -75,18 +75,20 @@ class LobstersApp implements ILobstersApp {
                         this.storage.usersCountWithAddress()
                     ]);
 
+                    const users: any = _.shuffle(await this.storage.usersListWithAddress());
+                    let restCount = config.totalTokensCount;
+                    users.forEach((u: any) => {
+                        restCount -= u.count;
+                    });
+
                     await this.tgBot.sendMessageToUser(telegramUserId, locale('export', {
                         usersCountWithAddress,
-                        usersCount
+                        usersCount,
+                        restCount
                     }));
 
-                    const users: any = _.shuffle(await this.storage.usersListWithAddress());
                     const addressToLeafDict = {} as any;
                     try {
-                        let restCount = config.totalTokensCount;
-                        users.forEach((u: any) => {
-                            restCount -= u.count;
-                        });
 
                         users.push({ address: config.remainedMultisig, count: restCount });
 

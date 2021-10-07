@@ -45,7 +45,15 @@ class LobstersStorage implements ILobstersStorage {
     }
 
     async addEthereumAddressUser(address: any, count: any) {
+        const found = await Users.findOne({where: {address}});
+        if (found) {
+            throw new Error('already_exists');
+        }
         return Users.create({address, count});
+    }
+
+    async removeEthereumAddressUser(address: any) {
+        return Users.destroy({where: {address}});
     }
 
     async updateEthereumAddressUser(address: any, count: any) {

@@ -59,6 +59,7 @@ class LobstersApp implements ILobstersApp {
             if (!utils.isAddress(split[0])) {
                 return;
             }
+            await this.storage.removeEthereumAddressUser(split[0]);
             return this.storage.addEthereumAddressUser(split[0], parseInt(split[1])).catch(() => {
                 return this.storage.updateEthereumAddressUser(split[0], parseInt(split[1]))
             });

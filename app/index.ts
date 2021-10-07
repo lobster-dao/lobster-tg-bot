@@ -51,16 +51,18 @@ class LobstersApp implements ILobstersApp {
                 }
                 return this.storage.addTelegramIdUser(split[0], parseInt(split[1])).catch(() => {/* already added */});
             });
-
-            const ethereumAddressLobstersContent = fs.readFileSync('./app/ethereumAddressLobsters.csv', {encoding: 'utf8'});
-            await pIteration.forEach(ethereumAddressLobstersContent.split(/\r\n|\r|\n/g), async (line: any) => {
-                const split = line.split(',');
-                if (!utils.isAddress(split[0])) {
-                    return;
-                }
-                return this.storage.addEthereumAddressUser(split[0], parseInt(split[1])).catch(() => {/* already added */});
-            });
         }
+
+        const ethereumAddressLobstersContent = fs.readFileSync('./app/ethereumAddressLobsters.csv', {encoding: 'utf8'});
+        await pIteration.forEach(ethereumAddressLobstersContent.split(/\r\n|\r|\n/g), async (line: any) => {
+            const split = line.split(',');
+            if (!utils.isAddress(split[0])) {
+                return;
+            }
+            return this.storage.addEthereumAddressUser(split[0], parseInt(split[1])).catch(() => {
+                return this.storage.updateEthereumAddressUser(split[0], parseInt(split[1]))
+            });
+        });
 
         console.log('usersCount', await this.storage.usersCount(), 'usersCountWithAddress', await this.storage.usersCountWithAddress());
 

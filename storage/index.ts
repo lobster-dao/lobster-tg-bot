@@ -48,6 +48,10 @@ class LobstersStorage implements ILobstersStorage {
         return Users.create({address, count});
     }
 
+    async updateEthereumAddressUser(address: any, count: any) {
+        return Users.update({address, count}, {where: {address}});
+    }
+
     async updateUser(telegramId: any, address: any) {
         return Users.update({address, telegramId: ''}, {where: {telegramId}});
     }
